@@ -4,7 +4,6 @@
     bottom: -30%;
     transform: rotate(90deg);
     left: 2.5%;
-    /* Rotate text by 90 degrees */
 }
 
 .container {
@@ -18,7 +17,6 @@
     width: 100%;
     height: 100%;
     background-color: rgba(0, 0, 0, 0.5);
-    /* Halbtransparenter Hintergrund */
     display: flex;
     justify-content: center;
     align-items: center;
