@@ -20,6 +20,7 @@ const trackWidth = 1500 * scale;
 const roadWidth = trackOuterRadius - trackInnerRadius;
 let finishLine = canvasSize - 500 * scale;
 
+
 let rectX = canvas.width / 2 - rectWidth / 2 + 20;
 let rectY = canvas.height / 2 + trackInnerRadius + (trackOuterRadius - trackInnerRadius) / 2 - rectHeight / 2;
 let joystickX = joystickRadius;
@@ -62,6 +63,7 @@ function startGame() {
     drawCar();
     drawSecondRect();
     const countdownInterval = setInterval(() => {
+
         ctx.clearRect(canvas.width / 2 - 50, canvas.height / 2 - 150, 100, 200);
         ctx.fillText(countdown.toString(), canvas.width / 2, canvas.height / 2);
         countdown--;
@@ -80,7 +82,6 @@ function drawNumberOfRoundsBlue() {
     ctx.font = "20px Arial";
     ctx.fillStyle = "blue";
     ctx.textAlign = "center";
-
     ctx.fillText(`Blue Round: ${currentRoundBlue}/${totalRounds}`, 0, 0);
     ctx.restore();
 }
@@ -89,7 +90,6 @@ function drawNumberOfRoundsBlue() {
 
 function drawNumberOfRoundsRed() {
     ctx.save();
-
     ctx.translate(480, 150);
     ctx.rotate(-Math.PI / 2);
     ctx.font = "20px Arial";
@@ -107,11 +107,11 @@ function showWinner(winner) {
     ctx.textAlign = "center";
     ctx.fillText(winnerText, canvas.width / 2, canvas.height / 2);
     gameStarted = false;
+
     drawItemBox = function () { };
     drawBrake = function () { };
     drawRect = function () { };
 }
-
 function updateRoundBlue() {
     if (rectX > canvasSize / 2 && rectX < (canvasSize / 2 + 10 * scale) && rectY > finishLine && rectY < finishLine + 200 * scale) {
         if (!blueRoundCompleted) {
@@ -142,8 +142,6 @@ function updateRoundRed() {
     }
     drawNumberOfRoundsRed();
 }
-
-
 
 function drawJoystick() {
     ctx.clearRect(0, 0, canvas.width, canvas.height);
@@ -183,10 +181,13 @@ function drawSecondRect() {
 }
 
 function drawRacingTrack() {
+
     ctx.beginPath();
     ctx.rect(canvas.width / 2 - trackWidth / 2, canvas.height / 2 - trackOuterRadius, trackWidth, trackOuterRadius * 2);
     ctx.fillStyle = 'gray';
     ctx.fill();
+
+
     ctx.beginPath();
     ctx.rect(canvas.width / 2 - (trackWidth / 2 - roadWidth), canvas.height / 2 - trackInnerRadius, trackWidth - 2 * roadWidth, trackInnerRadius * 2);
     ctx.fillStyle = 'green';
@@ -241,12 +242,13 @@ canvas.addEventListener("touchstart", function (e) {
     for (let i = 0; i < touches.length; i++) {
         let touchX = touches[i].clientX - canvas.getBoundingClientRect().left;
         let touchY = touches[i].clientY - canvas.getBoundingClientRect().top;
+
+
         if (isBoost1 && touchX > boostButtonBlue.x && touchX < boostButtonBlue.x + boostButtonBlue.width &&
             touchY > boostButtonBlue.y && touchY < boostButtonBlue.y + boostButtonBlue.height) {
             activateBoost('blue');
             isBoost1 = false;
         }
-
 
         if (isBoost2 && touchX > boostButtonRed.x && touchX < boostButtonRed.x + boostButtonRed.width &&
             touchY > boostButtonRed.y && touchY < boostButtonRed.y + boostButtonRed.height) {
@@ -266,12 +268,10 @@ function moveRect() {
     let newX = rectX + vx;
     let newY = rectY + vy;
 
-
     const leftLimit = canvas.width / 2 - trackOuterRadius + rectWidth / 2 - 25;
     const rightLimit = canvas.width / 2 + trackOuterRadius - rectWidth / 2 + 25;
     const topLimit = canvas.height / 2 - trackOuterRadius + rectHeight / 2;
     const bottomLimit = canvas.height / 2 + trackOuterRadius - rectHeight / 2;
-
 
     const distFromCenterX = Math.abs(canvas.width / 2 - (newX + rectWidth / 2));
     const distFromCenterY = Math.abs(canvas.height / 2 - (newY + rectHeight / 2));
@@ -305,7 +305,6 @@ function moveSecondRect() {
     const rightLimit = canvas.width / 2 + trackOuterRadius - rect2Width / 2 + 25;
     const topLimit = canvas.height / 2 - trackOuterRadius + rect2Height / 2;
     const bottomLimit = canvas.height / 2 + trackOuterRadius - rect2Height / 2;
-
 
     const distFromCenterX = Math.abs(canvas.width / 2 - (newX + rect2Width / 2));
     const distFromCenterY = Math.abs(canvas.height / 2 - (newY + rect2Height / 2));
@@ -341,7 +340,7 @@ let itemBox1 = {
 function drawItemBox(itemBox) {
     if (itemBox.visible) {
         ctx.save();
-        ctx.fillStyle = "brown";
+        ctx.fillStyle = "yellow";
         ctx.fillRect(itemBox.x, itemBox.y, itemBox.width, itemBox.height);
         ctx.restore();
     }
@@ -384,6 +383,7 @@ function checkCollisionWithItemBox() {
             rect2Y < itemBox1.y + itemBox1.height && rect2Y + rect2Height > itemBox1.y) {
             isBoost2 = true;
             itemBox1.visible = false;
+
             setTimeout(() => {
                 itemBox1.visible = true;
             }, 3000);
@@ -406,6 +406,7 @@ function drawBoostButtons() {
     ctx.strokeRect(boostButtonRed.x, boostButtonRed.y, boostButtonRed.width, boostButtonRed.height);
     ctx.fillStyle = hasBoostBeenUsedRed ? "white" : (isBoost2 ? "red" : "white");
     ctx.fillRect(boostButtonRed.x, boostButtonRed.y, boostButtonRed.width, boostButtonRed.height);
+
     ctx.restore();
 }
 
@@ -417,28 +418,55 @@ function limitJoystickPosition(joystick, centerX, centerY, radius) {
     const dy = joystick.y - centerY;
     const distance = Math.sqrt(dx * dx + dy * dy);
     if (distance > radius) {
+
         joystick.x = centerX + (dx / distance) * radius;
         joystick.y = centerY + (dy / distance) * radius;
     }
+}
+
+function getTouchPosition(touch, canvas) {
+    return {
+        x: touch.clientX - canvas.getBoundingClientRect().left,
+        y: touch.clientY - canvas.getBoundingClientRect().top
+    };
+}
+
+function handleBoostTouch(touch, boostButton, color) {
+    const touchPos = getTouchPosition(touch, canvas);
+    if (touchPos.x > boostButton.x && touchPos.x < boostButton.x + boostButton.width &&
+        touchPos.y > boostButton.y && touchPos.y < boostButton.y + boostButton.height) {
+        activateBoost(color);
+        return true;
+    }
+    return false;
 }
 
 canvas.addEventListener("touchstart", function (e) {
     const touches = e.touches;
     for (let i = 0; i < touches.length; i++) {
         const touch = touches[i];
-        let touchX = touch.clientX - canvas.getBoundingClientRect().left;
-        let touchY = touch.clientY - canvas.getBoundingClientRect().top;
-        if (touchX >= brake1.x && touchX <= brake1.x + brakeWidth &&
-            touchY >= brake1.y && touchY <= brake1.y + brakeHeight) {
-            brake1.beingTouched = true;
-        } else if (touchX >= brake2.x && touchX <= brake2.x + brakeWidth &&
-            touchY >= brake2.y && touchY <= brake2.y + brakeHeight) {
-            brake2.beingTouched = true;
-        } else {
-            if (touchX < canvas.width / 2) {
-                joysticks[touch.identifier] = { type: 'left', x: touchX, y: touchY };
+
+
+        if (!handleBoostTouch(touch, boostButtonBlue, 'blue') &&
+            !handleBoostTouch(touch, boostButtonRed, 'red')) {
+
+            const touchX = touch.clientX - canvas.getBoundingClientRect().left;
+            const touchY = touch.clientY - canvas.getBoundingClientRect().top;
+
+
+            if (touchX >= brake1.x && touchX <= brake1.x + brakeWidth &&
+                touchY >= brake1.y && touchY <= brake1.y + brakeHeight) {
+                brake1.beingTouched = true;
+            } else if (touchX >= brake2.x && touchX <= brake2.x + brakeWidth &&
+                touchY >= brake2.y && touchY <= brake2.y + brakeHeight) {
+                brake2.beingTouched = true;
             } else {
-                joysticks[touch.identifier] = { type: 'right', x: touchX, y: touchY };
+
+                if (touchX < canvas.width / 2) {
+                    joysticks[touch.identifier] = { type: 'left', x: touchX, y: touchY };
+                } else {
+                    joysticks[touch.identifier] = { type: 'right', x: touchX, y: touchY };
+                }
             }
         }
     }
@@ -453,11 +481,14 @@ canvas.addEventListener("touchmove", function (e) {
         if (joysticks[touch.identifier]) {
             let touchX = touch.clientX - canvas.getBoundingClientRect().left;
             let touchY = touch.clientY - canvas.getBoundingClientRect().top;
+
             const joystick = joysticks[touch.identifier];
             if (joystick.type === 'left') {
+
                 joystick.x = touchX;
                 joystick.y = touchY;
                 limitJoystickPosition(joystick, joystickRadius, joystickRadius, joystickRadius);
+
                 joystickX = joystick.x;
                 joystickY = joystick.y;
             } else {
@@ -475,18 +506,13 @@ canvas.addEventListener("touchend", function (e) {
     const touches = e.changedTouches;
     for (let i = 0; i < touches.length; i++) {
         const touch = touches[i];
-        let touchX = touch.clientX - canvas.getBoundingClientRect().left;
-        let touchY = touch.clientY - canvas.getBoundingClientRect().top;
-        if ((touchX >= brake1.x && touchX <= brake1.x + brakeWidth &&
-            touchY >= brake1.y && touchY <= brake1.y + brakeHeight) ||
-            (touchX >= brake2.x && touchX <= brake2.x + brakeWidth &&
-                touchY >= brake2.y && touchY <= brake2.y + brakeHeight)) {
-            brake1.beingTouched = false;
-            brake2.beingTouched = false;
-        }
 
         if (joysticks[touch.identifier]) {
             delete joysticks[touch.identifier];
+        } else {
+
+            brake1.beingTouched = false;
+            brake2.beingTouched = false;
         }
     }
 }, false);
